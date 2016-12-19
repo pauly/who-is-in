@@ -11,15 +11,13 @@ for FILE in $(ls -1tr ${FOLDER}); do
   STATUS=✓
   AWAYMSG=
   if [ ${DIFF} -gt 600 ]; then
-    AWAYMSG=" since $(ls -l ${FOLDER}/${FILE} | cut -d' ' -f5-8)"
+    AWAYMSG=" since $(ls -l ${FOLDER}/${FILE} | cut -d' ' -f6-8)"
     STATUS=❌
   fi
   NAME=$(cat ${FOLDER}/${FILE})
   VAR=$(echo "${NAME//[^a-zA-Z]/}" | tr '[a-z]' '[A-Z]')
-  if [ "${WANTED}" == "${VAR}" ]; then
-    if [ ${STATUS} == ✓ ]; then
-      exit 0
-    fi
+  if [ "${WANTED}" != "" ] && [ "${WANTED}" == "${VAR}" ]; then
+    [ ${STATUS} == ✓ ] && exit 0
     exit 1
   fi
   DETAIL="${STATUS} ${NAME}${AWAYMSG}"
@@ -28,8 +26,4 @@ for FILE in $(ls -1tr ${FOLDER}); do
   [ "${PREVIOUS}" != "${DETAIL}" ] && echo "$(date +'%F %H:%M') ${DETAIL}" >> ${FOLDER}/.log.${FILE}
   [ "${PREVIOUS}" != "${DETAIL}" ] && echo "${DETAIL}" > ${FOLDER}/.previous.${FILE}
   [ "${STATUS}" == ✓ ] && touch ${FOLDER}/${FILE}
-  # if [ "${PREVIOUS}" != "${DETAIL}" ]; then
-  #   echo "$(date +'%F %H:%M') ${DETAIL}" >> ${FOLDER}/.log.${FILE}
-  #   echo "${DETAIL}" > ${FOLDER}/.previous.${FILE}
-  # fi
 done

@@ -7,9 +7,7 @@ while read LINE; do
   FILE=$(echo "${LINE}" | cut -f2).txt
   NAME=$(echo "${LINE}" | cut -f3)
   echo ${NAME} > ${FOLDER}/${FILE}
-  if [ -f ${FOLDER}/.alias.${FILE} ]; then
-    cp ${FOLDER}/.alias.${FILE} ${FOLDER}/${FILE} 
-  fi
+  [ -f ${FOLDER}/.alias.${FILE} ] && cp ${FOLDER}/.alias.${FILE} ${FOLDER}/${FILE} 
 done < /tmp/arp-scan.txt
 
 echo "<!doctype html><html><head>"
@@ -17,5 +15,5 @@ echo "<title>Who is in?</title>"
 echo "<link rel=\"manifest\" href=\"scan-manifest.json\">"
 echo "<style>a {text-decoration: none}</style>"
 echo "</head><body><ol>"
-$DIR/status.sh
+$DIR/status
 echo "</ol></body></html>"
