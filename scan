@@ -2,15 +2,17 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 source $DIR/config.sh
 
-arp-scan --interval=2 --localnet --interface=wlan0 --retry=3 --quiet | grep 192.168 > /tmp/arp-scan.txt
+# arp-scan --interval=3 --localnet --interface=wlan0 --retry=2 --quiet 192.168.1.1-192.168.1.255| grep 192.168 > /tmp/arp-scan.txt
+arp-scan --interval=3 --interface=wlan0 --retry=2 --quiet 192.168.1.1-192.168.1.253| grep 192.168 > /tmp/arp-scan.txt
 while read LINE; do
+  echo "<!-- ${LINE} -->"
   FILE=$(echo "${LINE}" | cut -f2).txt
-  NAME=$(echo "${LINE}" | cut -f3)
-  echo ${NAME} > ${FOLDER}/${FILE}
-  [ -f ${FOLDER}/.alias.${FILE} ] && cp ${FOLDER}/.alias.${FILE} ${FOLDER}/${FILE} 
+  IP=$(echo "${LINE}" | cut -f1)
+  echo ${IP} > ${FOLDER}/${FILE}
 done < /tmp/arp-scan.txt
 
 echo "<!doctype html><html><head>"
+echo "<meta charset=\"utf-8\"/>"
 echo "<title>Who is in?</title>"
 echo "<link rel=\"manifest\" href=\"scan-manifest.json\">"
 echo "<style>a {text-decoration: none}</style>"
